@@ -5,7 +5,7 @@
 /**                                                                 **/
 /**   Segundo Exercicio-Programa                                    **/
 /**                                                                 **/
-/**   <nome do(a) aluno(a)>                   <numero USP>          **/
+/**   <Otavio Alves Rosa>                   <14748601>              **/
 /**                                                                 **/
 /*********************************************************************/
 
@@ -331,9 +331,31 @@ Peso valorAtual;
    o problema do caixeiro viajante.
    Esta funcao eh inicialmente chamada pela funcao caixeiroViajante */
 void caixeiroAux(Grafo*g, int atual, int numVisitados){
-
-/* Complete o codigo desta funcao */  
-  
+  if (numVisitados == g->numVertices) { // verifica se todos os vértices (tirando o 0) foram visitados
+    int custoVolta = pesoAresta(g, atual, 0); 
+    if (custoVolta > 0 && valorAtual+custoVolta<melhorValor) { // verifica se o ultimo vértice (0) foi visitado e se este ciclo é o melhor até o momento
+      melhorValor = valorAtual+custoVolta; // atualiza a variável global melhorValor
+      for (int i=0; i<g->numVertices; i++) {
+        melhorCiclo[i] = cicloAtual[i]; // atualiza o arranjo global melhorCiclo
+      }
+    }
+    return; // encerra esta chamada da função (inicia o caminho inverso da pilha de recursão)
+  }
+  PONT vizinho = listaDeVizinhos(g, atual); // variavel auxiliar para acessar a lista ligada de vizinhos do vértice atual
+  while (vizinho) { // enquanto há vizinhos para visitar...
+    if (visitado[vizinho->vertice] == false) { // se o vizinho ainda não foi visitado...
+      visitado[vizinho->vertice] = true; // marcar como visitado
+      numVisitados++; // aumentar o numero de vértices visitados
+      valorAtual += pesoAresta(g, atual, vizinho->vertice); // atualiza a variável de custo 
+      cicloAtual[numVisitados-1] = vizinho->vertice; // atualiza o arranjo de custo
+      caixeiroAux(g, vizinho->vertice, numVisitados); // chama a função caixeiroAux recursivamente para o vértice visitado
+      visitado[vizinho->vertice] = false; // desfaz a visita do vertice anterior 
+      numVisitados--; // desfaz o incremento do número de vértices visitados
+      valorAtual -= pesoAresta(g, atual, vizinho->vertice); // desfaz o incremento no custo atual
+    }
+    vizinho = vizinho->prox; // iniciar outra iteração
+  }
+  return; // encerra a função sem alterar as variáveis globais
 }
 
 
